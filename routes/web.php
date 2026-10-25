@@ -136,8 +136,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-// Group Admin (Bisa Dilindungin oleh middleware)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/order', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });
