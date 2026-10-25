@@ -35,21 +35,21 @@ Route::get('/about', function () {
 Route::get('/best-seller', function () {
     $bestSellers = [
         [
-            'name' => 'Water Kiss EDP',
-            'slug' => 'water-kiss-edp',
+            'name' => 'Sexy Gravity',
+            'slug' => 'Sexy Gravity',
             'category' => 'Unisex Series',
             'price' => 185000,
-            'image' => 'assets/water-kiss.jpeg',
+            'image' => 'assets/gambar1.jpeg',
             'description' => 'Aroma segar dan menenangkan dengan ketahanan ekstra sepanjang hari.',
             'rating' => '4.9',
             'sold' => '1.2k+',
         ],
         [
-            'name' => 'HMNS Alpha',
-            'slug' => 'hmns-alpha',
+            'name' => 'Royal Ispahan',
+            'slug' => 'Royal Ispahan',
             'category' => 'Men Series',
             'price' => 162000,
-            'image' => 'assets/hmns-alpha.jpeg',
+            'image' => 'assets/ispahan.jpeg',
             'description' => 'Kombinasi aroma kayu manis dan citrus maskulin yang memikat.',
             'rating' => '5.0',
             'sold' => '2.4k+',
