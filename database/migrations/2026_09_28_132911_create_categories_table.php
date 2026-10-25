@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            // Nama kategori aroma (contoh: Woody, Floral, Fresh)
+            $table->string('name');
+            // Slug untuk URL (contoh: woody, floral)
+            $table->string('slug')->unique();
+            // Deskripsi singkat tentang karakteristik aroma tersebut
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

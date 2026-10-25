@@ -16,13 +16,13 @@
             <h2 class="text-2xl font-sans italic text-stone-700">Find Your Signature Scent.</h2>
             <p class="text-sm font-sans text-stone-600 max-w-sm">Temukan aroma yang mencerminkan karakter dan momenmu.</p>
             <div class="flex flex-wrap gap-4 pt-4 font-sans text-xs tracking-wider uppercase">
-                <a href="#shop" class="bg-stone-900 text-stone-100 px-6 py-3 rounded-full hover:bg-stone-800 transition">Explore Collection &rarr;</a>
-                <a href="#quiz" class="border border-stone-800 text-stone-800 px-6 py-3 rounded-full hover:bg-stone-800 hover:text-white transition">Find Your Scent</a>
+                <a href="about" class="bg-stone-900 text-stone-100 px-6 py-3 rounded-full hover:bg-stone-800 transition">Explore Collection &rarr;</a>
+                <a href="about" class="border border-stone-800 text-stone-800 px-6 py-3 rounded-full hover:bg-stone-800 hover:text-white transition">Find Your Scent</a>
             </div>
         </div>
         <!-- Hero Product Banner Image -->
         <div class="md:w-1/2 mt-8 md:mt-0 flex justify-center">
-            <img src="{{ asset('images/hero-perfumes.png') }}" alt="Halent Perfumes" class="max-h-[420px] object-contain drop-shadow-xl">
+            <img src="{{ asset('assets/gambar.jpeg') }}" alt="Halent Perfumes" class="max-h-[420px] object-contain drop-shadow-xl">
         </div>
     </section>
 
@@ -110,7 +110,7 @@
                 <h3 class="font-serif text-2xl tracking-wider uppercase text-slate-100">For Him</h3>
                 <p class="text-xs text-slate-300">Confident. Fresh. Bold.</p>
                 <p class="text-[11px] text-slate-400 max-w-xs">Discover fragrances made for his everyday moments.</p>
-                <a href="#" class="inline-block border border-slate-400 text-slate-200 text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-white hover:text-slate-900 transition">Shop Men's Collection &rarr;</a>
+                <a href="shop" class="inline-block border border-slate-400 text-slate-200 text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-white hover:text-slate-900 transition">Shop Men's Collection &rarr;</a>
             </div>
             <img src="{{ asset('images/for-him.png') }}" alt="For Him" class="h-40 object-contain">
         </div>
@@ -127,33 +127,33 @@
     </section>
 
     <!-- SECTION 6: PERFUME FOR EVERY MOMENT -->
-    <section class="text-center space-y-8">
+
         <h2 class="text-2xl uppercase tracking-wider">Perfume For Every Moment</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 font-sans">
             <!-- Daily -->
             <div class="bg-stone-100 rounded-xl overflow-hidden p-3 space-y-2">
-                <img src="{{ asset('images/moment-daily.png') }}" alt="Daily" class="w-full h-36 object-cover rounded-lg">
+                <img src="{{ asset('assets/hero-parfume.jpeg') }}" alt="Water Kiss" class="w-full h-36 object-cover rounded-lg">
                 <h4 class="text-xs font-semibold uppercase">Daily</h4>
                 <p class="text-[10px] text-stone-500">Untuk aktivitas sehari-hari</p>
                 <a href="#" class="inline-block border border-stone-300 text-[9px] uppercase px-3 py-1 rounded-full">Explore &rarr;</a>
             </div>
             <!-- Date -->
             <div class="bg-stone-100 rounded-xl overflow-hidden p-3 space-y-2">
-                <img src="{{ asset('images/moment-date.png') }}" alt="Date" class="w-full h-36 object-cover rounded-lg">
+                <img src="{{ asset('assets/Date.jpeg') }}" alt="Date" class="w-full h-36 object-cover rounded-lg">
                 <h4 class="text-xs font-semibold uppercase">Date</h4>
                 <p class="text-[10px] text-stone-500">Untuk momen spesial</p>
                 <a href="#" class="inline-block border border-stone-300 text-[9px] uppercase px-3 py-1 rounded-full">Explore &rarr;</a>
             </div>
             <!-- Night -->
             <div class="bg-stone-100 rounded-xl overflow-hidden p-3 space-y-2">
-                <img src="{{ asset('images/moment-night.png') }}" alt="Night" class="w-full h-36 object-cover rounded-lg">
+                <img src="{{ asset('assets/NIGHT.jpeg') }}" alt="Night" class="w-full h-36 object-cover rounded-lg">
                 <h4 class="text-xs font-semibold uppercase">Night</h4>
                 <p class="text-[10px] text-stone-500">Untuk malam yang memorable</p>
                 <a href="#" class="inline-block border border-stone-300 text-[9px] uppercase px-3 py-1 rounded-full">Explore &rarr;</a>
             </div>
             <!-- Special -->
             <div class="bg-stone-100 rounded-xl overflow-hidden p-3 space-y-2">
-                <img src="{{ asset('images/moment-special.png') }}" alt="Special" class="w-full h-36 object-cover rounded-lg">
+                <img src="{{ asset('assets/Special.jpeg') }}" alt="Special" class="w-full h-36 object-cover rounded-lg">
                 <h4 class="text-xs font-semibold uppercase">Special</h4>
                 <p class="text-[10px] text-stone-500">Saat ingin tampil berbeda</p>
                 <a href="#" class="inline-block border border-stone-300 text-[9px] uppercase px-3 py-1 rounded-full">Explore &rarr;</a>
@@ -177,7 +177,7 @@
                 <div class="bg-stone-300 h-20 rounded-lg"></div>
                 <div class="bg-stone-300 h-20 rounded-lg"></div>
             </div>
-            <a href="#" class="inline-block border border-stone-800 text-[10px] uppercase tracking-wider px-4 py-2 rounded-full">Follow Us on Instagram &rarr;</a>
+            <a href="https://www.instagram.com/halent.parfume?mdxt=MTh5a2o1MzVpcWo3ZQ==" class="inline-block border border-stone-800 text-[10px] uppercase tracking-wider px-4 py-2 rounded-full">Follow Us on Instagram &rarr;</a>
         </div>
     </section>
 

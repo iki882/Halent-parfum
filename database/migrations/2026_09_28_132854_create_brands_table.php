@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+            // Nama merek parfum (contoh: Chanel, Dior, Halent, dll.)
+            $table->string('name');
+            // Slug untuk URL yang ramah SEO (contoh: chanel, halent-parfume)
+            $table->string('slug')->unique();
+            // Logo atau gambar merek (opsional, menyimpan nama file gambar)
+            $table->string('logo')->nullable();
+            // Deskripsi singkat tentang brand tersebut
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

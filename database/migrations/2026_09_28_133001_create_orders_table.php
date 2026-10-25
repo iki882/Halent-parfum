@@ -13,6 +13,19 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            // Menghubungkan pesanan ke tabel users (siapa yang memesan)
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            // Nomor atau kode transaksi unik (contoh: ORD-20261019-001)
+            $table->string('order_number')->unique();
+
+            $table->decimal('total_price', 12, 2);
+
+            // Status pesanan (contoh: pending, processing, completed, cancelled)
+            $table->string('status')->default('pending');
+
+            // Alamat pengiriman lengkap
+            $table->text('shipping_address');
             $table->timestamps();
         });
     }

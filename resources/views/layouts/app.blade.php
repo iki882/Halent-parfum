@@ -12,6 +12,13 @@
         {{-- Navbar --}}
         @include('components.navbar')
 
+        {{-- FLASH MESSAGE NOTIFIKASI --}}
+        @if(session('success'))
+            <div class="bg-emerald-600 text-white text-center py-2.5 text-xs font-semibold shadow-inner transition-all duration-300">
+                {{ session('success') }}
+            </div>
+        @endif
+
         {{-- Konten Utama --}}
         <main class="flex-grow min-h-[70vh]">
             @yield('content')

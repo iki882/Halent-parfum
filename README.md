@@ -29,6 +29,17 @@ In addition, [Laracasts](https://laracasts.com) contains thousands of video tuto
 
 You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
 
+## Database and product catalog
+
+Configure the database connection in the hosting environment, then run migrations and the catalog seeder:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --force
+```
+
+The seeder creates the initial brands, categories, and shop products. Do not use `migrate:fresh` on a database that contains production data.
+
 ## Agentic Development
 
 Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
