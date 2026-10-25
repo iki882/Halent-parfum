@@ -7,8 +7,6 @@
 @php
     $shippingFee = config('checkout.shipping_fee');
     $totalPayment = $product->price + $shippingFee;
-    // Tautan WhatsApp Business Asli / Utama
-    $waBusinessLink = "https://api.whatsapp.com/message/U4VKIVZ3X2VXF1?autoload=1&app_absent=0";
 @endphp
 
 <section class="bg-[#edf2ef] px-6 text-stone-800" style="padding-top: 140px; padding-bottom: 80px;">
@@ -119,9 +117,9 @@
                                 <p class="text-xs text-stone-700">Nomor rekening: <strong class="font-mono">901793085179</strong></p>
                             </div>
                             <p class="text-[11px] text-stone-600">Total transfer: <strong>Rp {{ number_format($totalPayment, 0, ',', '.') }}</strong></p>
-                            <a href="{{ $waBusinessLink }}" target="_blank" rel="noopener noreferrer" class="block w-full rounded-full bg-emerald-600 py-3 text-center text-xs font-semibold text-white transition hover:bg-emerald-500">
-                                Konfirmasi pembayaran via WhatsApp
-                            </a>
+                            <button type="submit" class="block w-full rounded-full bg-emerald-600 py-3 text-center text-xs font-semibold text-white transition hover:bg-emerald-700">
+                                Buat pesanan &amp; lanjut ke WhatsApp
+                            </button>
                         </div>
                     </div>
 
@@ -140,15 +138,18 @@
                                 <img src="{{ asset('assets/qr-code.png') }}" alt="QR Code GoPay QRIS" class="mx-auto w-44 object-contain">
                                 <p class="text-[11px] text-stone-600">Total pembayaran: <strong>Rp {{ number_format($totalPayment, 0, ',', '.') }}</strong></p>
                             </div>
-                            <a href="{{ $waBusinessLink }}" target="_blank" rel="noopener noreferrer" class="block w-full rounded-full bg-emerald-600 py-3 text-center text-xs font-semibold text-white transition hover:bg-emerald-500">
-                                Konfirmasi pembayaran via WhatsApp
-                            </a>
+                            <button type="submit" class="block w-full rounded-full bg-emerald-600 py-3 text-center text-xs font-semibold text-white transition hover:bg-emerald-700">
+                                Buat pesanan &amp; lanjut ke WhatsApp
+                            </button>
                         </div>
                     </div>
                 </fieldset>
 
+                    <p class="text-xs leading-5 text-stone-500">
+                        Pesanan akan disimpan dan WhatsApp terbuka dengan detailnya. Tekan tombol kirim di WhatsApp untuk mengirim konfirmasi.
+                    </p>
                     <button type="submit" class="w-full rounded-full bg-[#172752] py-3 text-sm font-semibold text-white transition hover:bg-[#243a70]">
-                        Buat Pesanan
+                        Buat Pesanan &amp; Lanjut ke WhatsApp
                     </button>
                     @if ($errors->any())
                         <p class="text-xs text-red-600">Periksa kembali data checkout Anda.</p>

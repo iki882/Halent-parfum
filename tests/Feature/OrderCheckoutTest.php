@@ -16,6 +16,8 @@ class OrderCheckoutTest extends TestCase
 
     public function test_authenticated_customer_can_place_an_order_at_the_database_price(): void
     {
+        config()->set('services.whatsapp.business_phone', '6283131604835');
+
         $user = User::factory()->create();
         $product = $this->createProduct();
 
@@ -31,7 +33,31 @@ class OrderCheckoutTest extends TestCase
 
         $order = Order::query()->firstOrFail();
 
-        $response->assertRedirect(route('orders.show', $order));
+        $response->assertRedirect();
+
+        $destination = parse_url($response->headers->get('Location'));
+        parse_str($destination['query'], $query);
+
+        $this->assertSame('api.whatsapp.com', $destination['host']);
+        $this->assertSame('/send', $destination['path']);
+        $this->assertSame('6283131604835', $query['phone']);
+        $this->assertSame(
+            "Halo Halent Parfum, saya ingin mengonfirmasi pesanan.\n\n"
+                ."*Nomor pesanan:* {$order->order_number}\n"
+                ."*Nama:* Test Customer\n"
+                ."*WhatsApp pembeli:* 08123456789\n"
+                ."*Email:* customer@example.com\n"
+                ."*Produk:* Water Kiss\n"
+                ."*Jumlah:* 1\n"
+                ."*Harga produk:* Rp 47.679\n"
+                ."*Ongkos kirim:* Rp 15.000\n"
+                ."*Total pembayaran:* Rp 62.679\n"
+                ."*Metode pembayaran:* SeaBank (Transfer Rekening)\n"
+                ."*Alamat pengiriman:*\n"
+                .'Jl. Contoh No. 1',
+            $query['text']
+        );
+
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
             'user_id' => $user->id,

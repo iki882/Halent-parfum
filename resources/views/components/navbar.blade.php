@@ -15,7 +15,7 @@
             <a href="{{ route('home') }}" class="hover:text-amber-200 transition">Home</a>
             <a href="{{ route('shop') }}" class="hover:text-amber-200 transition">Shop</a>
             <a href="{{ route('bestseller') }}" class="hover:text-amber-200 transition">Best Seller</a>
-            <a href="{{ route('home') }}#contact" class="hover:text-amber-200 transition">Contact</a>
+            <a href="{{ route('contact') }}#contact" class="hover:text-amber-200 transition">Contact</a>
         </div>
 
         <!-- Right Action Icons -->

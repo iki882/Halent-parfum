@@ -19,7 +19,7 @@
         <div class="space-y-2">
             <h4 class="font-semibold uppercase tracking-wider text-stone-100">Help</h4>
             <ul class="space-y-1.5 text-stone-400 text-[11px]">
-                <li><a href="#" class="hover:text-amber-200">Contact</a></li>
+                <li><a href="{{ route('contact') }}" class="hover:text-amber-200">Contact</a></li>
                 <li><a href="#" class="hover:text-amber-200">FAQ</a></li>
                 <li><a href="#" class="hover:text-amber-200">Shipping</a></li>
                 <li><a href="#" class="hover:text-amber-200">How to Order</a></li>

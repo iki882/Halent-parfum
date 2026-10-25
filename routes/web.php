@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
 use App\Models\Category;
 use App\Models\Product;
@@ -105,6 +106,12 @@ Route::get('/shop', function (Request $request) {
         'selectedCategory' => $filters['category'] ?? null,
     ]);
 })->name('shop');
+
+Route::get('/contact', function () {
+    return view('pages.contact');
+})->name('contact');
+
+Route::post('/contact/whatsapp', [ContactController::class, 'sendToWhatsapp'])->name('contact.whatsapp');
 
 // --------------------------------------------------------------------------
 // 3. Rute Khusus User Terautentikasi (Sudah Login)

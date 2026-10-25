@@ -79,9 +79,38 @@ class OrderController extends Controller
             return $order;
         });
 
-        return redirect()
-            ->route('orders.show', $order)
-            ->with('success', 'Pesanan Anda berhasil dibuat!');
+        $paymentMethod = match ($order->payment_method) {
+            'seabank' => 'SeaBank (Transfer Rekening)',
+            'gopay' => 'GoPay / QRIS',
+        };
+
+        $messageLines = [
+            'Halo Halent Parfum, saya ingin mengonfirmasi pesanan.',
+            '',
+            '*Nomor pesanan:* '.$order->order_number,
+            '*Nama:* '.str_replace(["\r", "\n"], ' ', $order->customer_name),
+            '*WhatsApp pembeli:* '.$order->customer_whatsapp,
+            '*Email:* '.$order->customer_email,
+            '*Produk:* '.$order->product_name,
+            '*Jumlah:* 1',
+            '*Harga produk:* Rp '.number_format((int) $order->price, 0, ',', '.'),
+            '*Ongkos kirim:* Rp '.number_format((int) $order->shipping_fee, 0, ',', '.'),
+            '*Total pembayaran:* Rp '.number_format((int) $order->total_price, 0, ',', '.'),
+            '*Metode pembayaran:* '.$paymentMethod,
+            '*Alamat pengiriman:*',
+            $order->shipping_address,
+        ];
+
+        if ($order->notes !== null && $order->notes !== '') {
+            $messageLines[] = '*Catatan:* '.$order->notes;
+        }
+
+        $query = http_build_query([
+            'phone' => config('services.whatsapp.business_phone'),
+            'text' => implode("\n", $messageLines),
+        ], '', '&', PHP_QUERY_RFC3986);
+
+        return redirect()->away('https://api.whatsapp.com/send?'.$query);
     }
 
     public function index(Request $request): View
