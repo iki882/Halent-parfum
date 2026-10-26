@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
@@ -72,38 +73,65 @@ Route::get('/best-seller', function () {
 
 Route::get('/shop', function (Request $request) {
     $catalogSlugs = ['men-series', 'women-series', 'unisex'];
-    $availableCategorySlugs = Category::query()
-        ->whereIn('slug', $catalogSlugs)
-        ->whereHas('products', fn ($query) => $query->where('is_active', true))
-        ->pluck('slug')
-        ->all();
-
+    $catalogUnavailable = false;
     $filters = $request->validate([
-        'category' => ['nullable', Rule::in($availableCategorySlugs)],
+        'category' => ['nullable', Rule::in($catalogSlugs)],
     ]);
 
-    $categories = Category::query()
-        ->whereIn('slug', $availableCategorySlugs)
-        ->orderBy('name')
-        ->get();
+    try {
+        $availableCategorySlugs = Category::query()
+            ->whereIn('slug', $catalogSlugs)
+            ->whereHas('products', fn ($query) => $query->where('is_active', true))
+            ->pluck('slug')
+            ->all();
 
-    $products = Product::query()
-        ->with('category')
-        ->where('is_active', true)
-        ->whereHas('category', function ($query) use ($availableCategorySlugs, $filters) {
-            $query->whereIn('slug', $availableCategorySlugs);
+        $categories = Category::query()
+            ->whereIn('slug', $availableCategorySlugs)
+            ->orderBy('name')
+            ->get();
 
-            if (! empty($filters['category'])) {
-                $query->where('slug', $filters['category']);
-            }
-        })
-        ->orderBy('name')
-        ->get();
+        $products = Product::query()
+            ->with('category')
+            ->where('is_active', true)
+            ->whereHas('category', function ($query) use ($availableCategorySlugs, $filters) {
+                $query->whereIn('slug', $availableCategorySlugs);
+
+                if (! empty($filters['category'])) {
+                    $query->where('slug', $filters['category']);
+                }
+            })
+            ->orderBy('name')
+            ->get();
+    } catch (QueryException $exception) {
+        if ((int) $exception->getPrevious()?->getCode() !== 2002) {
+            throw $exception;
+        }
+
+        report($exception);
+
+        $categories = collect([
+            (object) ['name' => 'Men Series', 'slug' => 'men-series'],
+            (object) ['name' => 'Women Series', 'slug' => 'women-series'],
+        ])->when($filters['category'] ?? null, fn ($categories, $selectedCategory) => $categories->where('slug', $selectedCategory)->values()
+        );
+
+        $products = collect(config('catalog.fallback_products'))
+            ->when($filters['category'] ?? null, fn ($products, $selectedCategory) => $products->where('category', $selectedCategory)
+            )
+            ->map(function (array $product): object {
+                $product['category'] = (object) ['name' => $product['categoryName']];
+
+                return (object) $product;
+            })
+            ->values();
+        $catalogUnavailable = true;
+    }
 
     return view('components.shop', [
         'categories' => $categories,
         'products' => $products,
         'selectedCategory' => $filters['category'] ?? null,
+        'catalogUnavailable' => $catalogUnavailable,
     ]);
 })->name('shop');
 
@@ -122,15 +150,37 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Rute Tampilan Form Checkout
-    Route::get('/checkout/{product:slug}', function (Product $product) {
-        abort_unless($product->is_active, 404);
-        $product->load('category');
+    Route::get('/checkout/{slug}', function (string $slug) {
+        $catalogUnavailable = false;
 
-        return view('pages.checkout', compact('product'));
+        try {
+            $product = Product::query()
+                ->where('slug', $slug)
+                ->where('is_active', true)
+                ->firstOrFail();
+            $product->load('category');
+        } catch (QueryException $exception) {
+            if ((int) $exception->getPrevious()?->getCode() !== 2002) {
+                throw $exception;
+            }
+
+            report($exception);
+
+            $fallbackProduct = collect(config('catalog.fallback_products'))->firstWhere('slug', $slug);
+            abort_if($fallbackProduct === null, 404);
+
+            $fallbackProduct['category'] = (object) ['name' => $fallbackProduct['categoryName']];
+            $product = (object) $fallbackProduct;
+            $catalogUnavailable = true;
+        }
+
+        return view('pages.checkout', compact('product', 'catalogUnavailable'));
     })->name('checkout');
 
     // Rute Proses Transaksi & Antrean Pesanan (OrderController)
     Route::post('/checkout/store', [OrderController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/fallback', [OrderController::class, 'sendFallbackCheckoutToWhatsapp'])->name('checkout.fallback.store');
+    Route::get('/orders/{order}/whatsapp', [OrderController::class, 'sendOrderProofToWhatsapp'])->name('orders.whatsapp');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
 
