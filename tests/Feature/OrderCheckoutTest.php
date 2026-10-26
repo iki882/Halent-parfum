@@ -33,30 +33,7 @@ class OrderCheckoutTest extends TestCase
 
         $order = Order::query()->firstOrFail();
 
-        $response->assertRedirect();
-
-        $destination = parse_url($response->headers->get('Location'));
-        parse_str($destination['query'], $query);
-
-        $this->assertSame('api.whatsapp.com', $destination['host']);
-        $this->assertSame('/send', $destination['path']);
-        $this->assertSame('6283131604835', $query['phone']);
-        $this->assertSame(
-            "Halo Halent Parfum, saya ingin mengonfirmasi pesanan.\n\n"
-                ."*Nomor pesanan:* {$order->order_number}\n"
-                ."*Nama:* Test Customer\n"
-                ."*WhatsApp pembeli:* 08123456789\n"
-                ."*Email:* customer@example.com\n"
-                ."*Produk:* Water Kiss\n"
-                ."*Jumlah:* 1\n"
-                ."*Harga produk:* Rp 47.679\n"
-                ."*Ongkos kirim:* Rp 15.000\n"
-                ."*Total pembayaran:* Rp 62.679\n"
-                ."*Metode pembayaran:* SeaBank (Transfer Rekening)\n"
-                ."*Alamat pengiriman:*\n"
-                .'Jl. Contoh No. 1',
-            $query['text']
-        );
+        $response->assertRedirect(route('orders.show', $order));
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
@@ -75,6 +52,46 @@ class OrderCheckoutTest extends TestCase
             'id' => $product->id,
             'stock' => 1,
         ]);
+    }
+
+    public function test_customer_can_send_order_proof_to_whatsapp(): void
+    {
+        config()->set('services.whatsapp.business_phone', '6283131604835');
+
+        $user = User::factory()->create();
+        $product = $this->createProduct();
+        $order = Order::create([
+            'user_id' => $user->id,
+            'order_number' => 'ORD-TEST-WA-0001',
+            'product_name' => $product->name,
+            'price' => $product->price,
+            'total_price' => 62679,
+            'shipping_fee' => 15000,
+            'customer_name' => 'Test Customer',
+            'customer_whatsapp' => '08123456789',
+            'customer_email' => 'customer@example.com',
+            'shipping_address' => 'Jl. Contoh No. 1',
+            'payment_method' => 'seabank',
+            'status' => 'pending',
+        ]);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'price' => $product->price,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('orders.whatsapp', $order));
+
+        $response->assertRedirect();
+
+        $destination = parse_url($response->headers->get('Location'));
+        parse_str($destination['query'], $query);
+
+        $this->assertSame('api.whatsapp.com', $destination['host']);
+        $this->assertSame('6283131604835', $query['phone']);
+        $this->assertStringContainsString('ORD-TEST-WA-0001', $query['text']);
+        $this->assertStringContainsString('Water Kiss', $query['text']);
+        $this->assertStringContainsString('Saya akan melampirkan bukti pembayaran', $query['text']);
     }
 
     public function test_customer_cannot_view_another_customers_order(): void
@@ -102,6 +119,9 @@ class OrderCheckoutTest extends TestCase
 
         $this->actingAs($otherUser)
             ->get(route('orders.show', $order))
+            ->assertNotFound();
+
+        $this->get(route('orders.whatsapp', $order))
             ->assertNotFound();
     }
 
@@ -152,17 +172,17 @@ class OrderCheckoutTest extends TestCase
             ->assertViewIs('pages.home');
     }
 
-    public function test_successful_login_redirects_to_home(): void
+    public function test_successful_login_redirects_to_shop(): void
     {
         $user = User::factory()->create();
 
         $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
-        ])->assertRedirect(route('home'));
+        ])->assertRedirect(route('shop'));
     }
 
-    public function test_login_returns_customer_to_requested_checkout(): void
+    public function test_login_redirects_to_shop_after_customer_requests_checkout(): void
     {
         $user = User::factory()->create();
         $product = $this->createProduct();
@@ -173,7 +193,7 @@ class OrderCheckoutTest extends TestCase
         $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
-        ])->assertRedirect(route('checkout', $product->slug));
+        ])->assertRedirect(route('shop'));
     }
 
     public function test_successful_registration_redirects_to_home(): void
