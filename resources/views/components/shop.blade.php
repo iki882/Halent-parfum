@@ -13,9 +13,15 @@
 
         <header class="text-center">
             <h1 class="text-3xl font-black tracking-wider text-stone-900 md:text-4xl">HALENT PARFUM SHOP</h1>
-            <p class="mx-auto mt-2 max-w-xl text-xs text-stone-600 md:text-sm">
-                Temukan esensi aroma terbaik yang merepresentasikan karakter unikmu
-            </p>
+            @auth
+                <p class="mx-auto mt-2 max-w-xl text-xs text-stone-600 md:text-sm">
+                    Halo, {{ auth()->user()->name }}. Temukan aroma favoritmu hari ini.
+                </p>
+            @else
+                <p class="mx-auto mt-2 max-w-xl text-xs text-stone-600 md:text-sm">
+                    Temukan esensi aroma terbaik yang merepresentasikan karakter unikmu
+                </p>
+            @endauth
 
             <nav aria-label="Filter kategori produk" class="mt-10 flex flex-wrap justify-center gap-3">
                 <a href="{{ route('shop') }}"
@@ -38,6 +44,12 @@
                 @endforeach
             </nav>
         </header>
+
+        @if ($catalogUnavailable ?? false)
+            <p class="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-8 text-center text-sm text-amber-900" role="status">
+                Menampilkan katalog cadangan. Pemesanan sementara tidak tersedia.
+            </p>
+        @endif
 
         @if ($products->isEmpty())
             <p class="mt-10 rounded-xl bg-white p-8 text-center text-sm text-stone-600">
