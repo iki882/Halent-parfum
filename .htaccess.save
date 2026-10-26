@@ -1,0 +1,13 @@
+<IfModule m
+
+od_rewrite.c>
+    RewriteEngine On
+
+    # Blokir akses ke file dan folder internal Laravel
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)(/|$) - [F,L,NC]
+    RewriteRule ^(artisan|composer\.(json|lock)|phpunit\.xml|\.env)($|/) - [F,L,NC]
+
+    # Arahkan permintaan ke folder public
+    RewriteRule ^$ public/ [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
