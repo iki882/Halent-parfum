@@ -40,7 +40,7 @@
                     <p class="text-[11px] text-stone-500 uppercase tracking-widest">Clean • Fresh • Light</p>
                     <a href="#" class="inline-block bg-stone-900 text-white text-[10px] uppercase tracking-wider px-4 py-2 rounded-full">Explore Fresh &rarr;</a>
                 </div>
-                <img src="{{ asset('images/scent-fresh.png') }}" alt="Fresh Scent" class="h-32 object-contain">
+                <img src="{{ asset('assets/water-kiss.jpeg') }}" alt="Fresh Scent" class="h-32 object-contain">
             </div>
             <!-- Sweet -->
             <div class="bg-[#fcedf0] p-6 rounded-2xl flex items-center justify-between text-left">
@@ -49,7 +49,7 @@
                     <p class="text-[11px] text-stone-500 uppercase tracking-widest">Sweet • Feminine • Playful</p>
                     <a href="#" class="inline-block bg-stone-100 text-stone-900 text-[10px] uppercase tracking-wider px-4 py-2 rounded-full">Explore Sweet &rarr;</a>
                 </div>
-                <img src="{{ asset('images/scent-sweet.png') }}" alt="Sweet Scent" class="h-32 object-contain">
+                <img src="{{ asset('assets/she-loved.jpeg') }}" alt="Sweet Scent" class="h-32 object-contain">
             </div>
             <!-- Bold -->
             <div class="bg-[#1c1b18] text-white p-6 rounded-2xl flex items-center justify-between text-left">
@@ -58,7 +58,7 @@
                     <p class="text-[11px] text-stone-400 uppercase tracking-widest">Bold • Elegant • Memorable</p>
                     <a href="#" class="inline-block bg-stone-100 text-stone-900 text-[10px] uppercase tracking-wider px-4 py-2 rounded-full font-semibold">Explore Bold &rarr;</a>
                 </div>
-                <img src="{{ asset('images/scent-bold.png') }}" alt="Bold Scent" class="h-32 object-contain">
+                <img src="{{ asset('assets/ispahan.jpeg') }}" alt="Bold Scent" class="h-32 object-contain">
             </div>
         </div>
     </section>
@@ -72,7 +72,7 @@
             <a href="#" class="inline-block bg-stone-900 text-white font-sans text-xs uppercase tracking-wider px-6 py-3 rounded-full mt-2">Explore Mykonos &rarr;</a>
         </div>
         <div class="md:w-2/3 mt-6 md:mt-0 flex justify-end">
-            <img src="{{ asset('images/mykonos-collection.png') }}" alt="Mykonos Collection" class="max-h-72 object-contain">
+            <img src="{{ asset('assets/hero-parfume.jpeg') }}" alt="Mykonos Collection" class="max-h-72 object-contain">
         </div>
     </section>
 
@@ -110,9 +110,9 @@
                 <h3 class="font-serif text-2xl tracking-wider uppercase text-slate-100">For Him</h3>
                 <p class="text-xs text-slate-300">Confident. Fresh. Bold.</p>
                 <p class="text-[11px] text-slate-400 max-w-xs">Discover fragrances made for his everyday moments.</p>
-                <a href="shop" class="inline-block border border-slate-400 text-slate-200 text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-white hover:text-slate-900 transition">Shop Men's Collection &rarr;</a>
+                <a href="{{ route('shop') }}" class="inline-block border border-slate-400 text-slate-200 text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-white hover:text-slate-900 transition">Shop Men's Collection &rarr;</a>
             </div>
-            <img src="{{ asset('images/for-him.png') }}" alt="For Him" class="h-40 object-contain">
+            <img src="{{ asset('assets/water-man.jpeg') }}" alt="For Him" class="h-40 object-contain">
         </div>
         <!-- For Her -->
         <div class="bg-[#fceef0] p-8 rounded-2xl flex items-center justify-between">
@@ -122,7 +122,7 @@
                 <p class="text-[11px] text-rose-600 max-w-xs">Find a fragrance that feels like you.</p>
                 <a href="#" class="inline-block border border-rose-800 text-rose-900 text-[10px] uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-rose-900 hover:text-white transition">Shop Women's Collection &rarr;</a>
             </div>
-            <img src="{{ asset('images/for-her.png') }}" alt="For Her" class="h-40 object-contain">
+            <img src="{{ asset('assets/black-opium.jpeg') }}" alt="For Her" class="h-40 object-contain">
         </div>
     </section>
 
