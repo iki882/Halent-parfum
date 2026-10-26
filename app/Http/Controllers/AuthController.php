@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use PDOException;
 
 class AuthController extends Controller
 {
@@ -18,26 +19,36 @@ class AuthController extends Controller
     // 2. Memproses Data Register
     public function register(Request $request)
     {
-        // Validasi inputan user
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
 
-        // Simpan data user baru ke database (Password di-enkripsi menggunakan Hash)
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+        } catch (PDOException $exception) {
+            if (! $this->isDatabaseConnectionFailure($exception)) {
+                throw $exception;
+            }
+
+            report($exception);
+
+            return back()
+                ->withErrors(['email' => 'Pendaftaran sementara tidak tersedia karena koneksi database bermasalah. Silakan coba lagi nanti.'])
+                ->withInput($request->except(['password', 'password_confirmation']));
+        }
 
         // Otomatis login setelah berhasil register
         Auth::login($user);
         $request->session()->regenerate();
 
         return redirect()
-            ->intended(route('home'))
+            ->route('home')
             ->with('success', 'Registrasi berhasil! Selamat datang.');
     }
 
@@ -50,18 +61,30 @@ class AuthController extends Controller
     // 4. Memproses Data Login
     public function login(Request $request)
     {
-        // Validasi inputan login
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        // Cek kecocokan email & password di database
-        if (Auth::attempt($credentials)) {
+        try {
+            $authenticated = Auth::attempt($credentials);
+        } catch (PDOException $exception) {
+            if (! $this->isDatabaseConnectionFailure($exception)) {
+                throw $exception;
+            }
+
+            report($exception);
+
+            return back()
+                ->withErrors(['email' => 'Login sementara tidak tersedia karena koneksi database bermasalah. Silakan coba lagi nanti.'])
+                ->onlyInput('email');
+        }
+
+        if ($authenticated) {
             $request->session()->regenerate();
 
             return redirect()
-                ->intended(route('home'))
+                ->route('shop')
                 ->with('success', 'Berhasil login!');
         }
 
@@ -79,5 +102,10 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home')->with('success', 'Berhasil keluar.');
+    }
+
+    private function isDatabaseConnectionFailure(PDOException $exception): bool
+    {
+        return (int) ($exception->errorInfo[1] ?? $exception->getCode()) === 2002;
     }
 }
