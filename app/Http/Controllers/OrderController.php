@@ -79,31 +79,107 @@ class OrderController extends Controller
             return $order;
         });
 
+        return redirect()->away($this->orderWhatsappUrl($order));
+    }
+
+    public function sendOrderProofToWhatsapp(Request $request, Order $order): RedirectResponse
+    {
+        abort_unless(
+            (string) $order->user_id === (string) $request->user()->getAuthIdentifier(),
+            404
+        );
+
+        $order->load('items.product');
+
+        return redirect()->away($this->orderWhatsappUrl($order));
+    }
+
+    private function orderWhatsappUrl(Order $order): string
+    {
+        $order->loadMissing('items.product');
+
         $paymentMethod = match ($order->payment_method) {
             'seabank' => 'SeaBank (Transfer Rekening)',
             'gopay' => 'GoPay / QRIS',
         };
 
         $messageLines = [
-            'Halo Halent Parfum, saya ingin mengonfirmasi pesanan.',
+            'Halo Halent Parfum, saya sudah melakukan pembayaran dan ingin mengirim bukti pembayaran pesanan.',
             '',
             '*Nomor pesanan:* '.$order->order_number,
             '*Nama:* '.str_replace(["\r", "\n"], ' ', $order->customer_name),
             '*WhatsApp pembeli:* '.$order->customer_whatsapp,
             '*Email:* '.$order->customer_email,
-            '*Produk:* '.$order->product_name,
-            '*Jumlah:* 1',
-            '*Harga produk:* Rp '.number_format((int) $order->price, 0, ',', '.'),
-            '*Ongkos kirim:* Rp '.number_format((int) $order->shipping_fee, 0, ',', '.'),
-            '*Total pembayaran:* Rp '.number_format((int) $order->total_price, 0, ',', '.'),
-            '*Metode pembayaran:* '.$paymentMethod,
-            '*Alamat pengiriman:*',
-            $order->shipping_address,
         ];
+
+        foreach ($order->items as $item) {
+            $messageLines[] = '*Produk:* '.$item->product->name;
+            $messageLines[] = '*Jumlah:* '.$item->quantity;
+            $messageLines[] = '*Harga produk:* Rp '.number_format((int) $item->price, 0, ',', '.');
+        }
+
+        $messageLines[] = '*Ongkos kirim:* Rp '.number_format((int) $order->shipping_fee, 0, ',', '.');
+        $messageLines[] = '*Total pembayaran:* Rp '.number_format((int) $order->total_price, 0, ',', '.');
+        $messageLines[] = '*Metode pembayaran:* '.$paymentMethod;
+        $messageLines[] = '*Alamat pengiriman:*';
+        $messageLines[] = $order->shipping_address;
+        $messageLines[] = '';
+        $messageLines[] = 'Saya akan melampirkan bukti pembayaran pada chat ini.';
 
         if ($order->notes !== null && $order->notes !== '') {
             $messageLines[] = '*Catatan:* '.$order->notes;
         }
+
+        $query = http_build_query([
+            'phone' => config('services.whatsapp.business_phone'),
+            'text' => implode("\n", $messageLines),
+        ], '', '&', PHP_QUERY_RFC3986);
+
+        return 'https://api.whatsapp.com/send?'.$query;
+    }
+
+    public function sendFallbackCheckoutToWhatsapp(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'product' => ['required', 'string', Rule::in(array_column(config('catalog.fallback_products'), 'slug'))],
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_whatsapp' => ['required', 'string', 'max:20'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'shipping_address' => ['required', 'string', 'max:5000'],
+            'notes' => ['nullable', 'string', 'max:2000'],
+            'payment_method' => ['required', Rule::in(['seabank', 'gopay'])],
+        ]);
+
+        $product = collect(config('catalog.fallback_products'))->firstWhere('slug', $validated['product']);
+        abort_if($product === null, 404);
+
+        $paymentMethod = match ($validated['payment_method']) {
+            'seabank' => 'SeaBank (Transfer Rekening)',
+            'gopay' => 'GoPay / QRIS',
+        };
+        $shippingFee = (int) config('checkout.shipping_fee');
+        $totalPayment = (int) $product['price'] + $shippingFee;
+        $messageLines = [
+            'Halo Halent Parfum, saya ingin memesan produk berikut.',
+            '',
+            '*Nama:* '.str_replace(["\r", "\n"], ' ', $validated['customer_name']),
+            '*WhatsApp pembeli:* '.$validated['customer_whatsapp'],
+            '*Email:* '.$validated['customer_email'],
+            '*Produk:* '.$product['name'],
+            '*Harga produk:* Rp '.number_format((int) $product['price'], 0, ',', '.'),
+            '*Ongkos kirim:* Rp '.number_format($shippingFee, 0, ',', '.'),
+            '*Total pembayaran:* Rp '.number_format($totalPayment, 0, ',', '.'),
+            '*Metode pembayaran:* '.$paymentMethod,
+            '*Alamat pengiriman:*',
+            $validated['shipping_address'],
+        ];
+
+        if (! empty($validated['notes'])) {
+            $messageLines[] = '*Catatan:* '.$validated['notes'];
+        }
+
+        $messageLines[] = '';
+        $messageLines[] = 'Saya akan mengirim bukti pembayaran pada chat ini.';
 
         $query = http_build_query([
             'phone' => config('services.whatsapp.business_phone'),
