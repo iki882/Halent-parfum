@@ -52,6 +52,11 @@
         <a href="{{ route('orders.index') }}" class="mt-6 inline-block text-sm font-semibold text-[#172752] underline">
             Lihat semua pesanan
         </a>
+
+        <a href="{{ route('orders.whatsapp', $order) }}" target="_blank" rel="noopener noreferrer"
+           class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+            Kirim Bukti Pesanan via WhatsApp
+        </a>
     </section>
 </main>
 @endsection
