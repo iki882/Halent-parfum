@@ -9,7 +9,7 @@
                 <p class="text-xs font-semibold uppercase tracking-[0.25em] text-[#172752]">Kami siap membantu</p>
                 <h1 class="mt-3 font-serif text-3xl font-bold text-stone-900 sm:text-4xl">Hubungi Halent Parfum</h1>
                 <p class="mt-4 text-sm leading-6 text-stone-600">
-                    Ada pertanyaan tentang produk atau pesanan? Hubungi kami melalui WhatsApp Business.
+                    Kirim pertanyaan, kritik, saran, atau masukan langsung melalui WhatsApp Business.
                 </p>
             </div>
 
@@ -60,7 +60,7 @@
                     </div>
 
                     <div>
-                        <label for="message" class="block text-sm font-medium text-stone-700">Pesan atau kendala</label>
+                        <label for="message" class="block text-sm font-medium text-stone-700">Pesan, kritik, saran, atau masukan</label>
                         <textarea
                             name="message"
                             id="message"
@@ -68,7 +68,7 @@
                             required
                             maxlength="2000"
                             class="mt-1.5 block w-full resize-y rounded-xl border border-stone-300 px-4 py-3 text-sm text-stone-900 shadow-sm outline-none transition placeholder:text-stone-400 focus:border-[#172752] focus:ring-2 focus:ring-[#172752]/20"
-                            placeholder="Jelaskan pertanyaan atau kendala Anda..."
+                            placeholder="Tuliskan pertanyaan, kritik, saran, atau masukan Anda..."
                         >{{ old('message') }}</textarea>
                         @error('message')
                             <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
