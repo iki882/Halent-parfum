@@ -17,7 +17,13 @@
             <p class="text-xs text-stone-600 mt-1">Lengkapi data pengiriman dan pilih metode pembayaran</p>
         </div>
 
-        <form action="{{ route('checkout.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        @if ($catalogUnavailable ?? false)
+            <p class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+                Database sedang tidak tersedia. Detail checkout akan dikirim langsung ke WhatsApp dan tidak tersimpan di riwayat akun.
+            </p>
+        @endif
+
+        <form action="{{ route(($catalogUnavailable ?? false) ? 'checkout.fallback.store' : 'checkout.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             @csrf
             <input type="hidden" name="product" value="{{ $product->slug }}">
 
@@ -117,9 +123,6 @@
                                 <p class="text-xs text-stone-700">Nomor rekening: <strong class="font-mono">901793085179</strong></p>
                             </div>
                             <p class="text-[11px] text-stone-600">Total transfer: <strong>Rp {{ number_format($totalPayment, 0, ',', '.') }}</strong></p>
-                            <button type="submit" class="block w-full rounded-full bg-emerald-600 py-3 text-center text-xs font-semibold text-white transition hover:bg-emerald-700">
-                                Buat pesanan &amp; lanjut ke WhatsApp
-                            </button>
                         </div>
                     </div>
 
@@ -138,18 +141,15 @@
                                 <img src="{{ asset('assets/qr-code.png') }}" alt="QR Code GoPay QRIS" class="mx-auto w-44 object-contain">
                                 <p class="text-[11px] text-stone-600">Total pembayaran: <strong>Rp {{ number_format($totalPayment, 0, ',', '.') }}</strong></p>
                             </div>
-                            <button type="submit" class="block w-full rounded-full bg-emerald-600 py-3 text-center text-xs font-semibold text-white transition hover:bg-emerald-700">
-                                Buat pesanan &amp; lanjut ke WhatsApp
-                            </button>
                         </div>
                     </div>
                 </fieldset>
 
                     <p class="text-xs leading-5 text-stone-500">
-                        Pesanan akan disimpan dan WhatsApp terbuka dengan detailnya. Tekan tombol kirim di WhatsApp untuk mengirim konfirmasi.
+                        Selesaikan pembayaran dengan metode pilihan, lalu simpan pesanan. Anda dapat mengirim detail dan bukti pembayaran melalui WhatsApp dari halaman berikutnya.
                     </p>
                     <button type="submit" class="w-full rounded-full bg-[#172752] py-3 text-sm font-semibold text-white transition hover:bg-[#243a70]">
-                        Buat Pesanan &amp; Lanjut ke WhatsApp
+                        {{ ($catalogUnavailable ?? false) ? 'Kirim Pesanan via WhatsApp' : 'Saya Sudah Bayar' }}
                     </button>
                     @if ($errors->any())
                         <p class="text-xs text-red-600">Periksa kembali data checkout Anda.</p>
