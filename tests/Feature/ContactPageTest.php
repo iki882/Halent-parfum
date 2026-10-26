@@ -15,7 +15,7 @@ class ContactPageTest extends TestCase
             ->assertSee('Hubungi Halent Parfum')
             ->assertSee('Nama lengkap')
             ->assertSee('ID pesanan')
-            ->assertSee('Pesan atau kendala')
+            ->assertSee('Pesan, kritik, saran, atau masukan')
             ->assertSee('action="'.route('contact.whatsapp').'"', false)
             ->assertSee('href="'.route('contact').'"', false);
     }
